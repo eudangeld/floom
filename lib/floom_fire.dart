@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:floom/src/custom_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:floom/src/fire_colors.dart';
+import 'package:flutter/scheduler.dart';
 
 class FloomFire extends StatefulWidget {
   @override
@@ -18,6 +20,7 @@ class _FloomFireState extends State<FloomFire> {
   Table fireTabl;
   Timer _timer;
   bool _debug = false;
+  Ticker _ticker;
 
   @override
   void initState() {
@@ -25,9 +28,18 @@ class _FloomFireState extends State<FloomFire> {
 
     _createFirestructure();
 
-    _timer = Timer.periodic(Duration(milliseconds: 100), (Timer f) {
-      _calculateFirePropagation();
-    });
+    _ticker = Ticker((elapsed) => _calculateFirePropagation());
+    _ticker.start();
+
+    // _timer = Timer.periodic(Duration(seconds: 60 ~/ 1000), (Timer f) {
+    //   _calculateFirePropagation();
+    // });
+  }
+
+  @override
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
   }
 
   void updateFireIntensity(int currentPixel) {
@@ -112,14 +124,22 @@ class _FloomFireState extends State<FloomFire> {
   Widget build(BuildContext context) {
     _createFireSource();
     _calculateFirePropagation();
-    _createFireWidgets();
+    // _createFireWidgets();
 
-    return GridView.count(
-      crossAxisCount: fireWidth,
-      // childAspectRatio: 1.0,
-      children: widgets.map((f) {
-        return GridTile(child: f);
-      }).toList(),
+    return Container(
+      height: fireHeight.toDouble(),
+      child: CustomPaint(
+        size: Size(fireWidth.toDouble(), fireHeight.toDouble()),
+        painter: FloomPainter(fire, fireWidth, fireHeight),
+      ),
     );
+
+    // return GridView.count(
+    //   crossAxisCount: fireWidth,
+    //   // childAspectRatio: 1.0,
+    //   children: widgets.map((f) {
+    //     return GridTile(child: f);
+    //   }).toList(),
+    // );
   }
 }
