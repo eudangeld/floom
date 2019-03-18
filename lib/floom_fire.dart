@@ -13,17 +13,19 @@ class _FloomFireState extends State<FloomFire> {
   List<int> fire = [];
   List<TableRow> tableRows = [];
   List<Widget> widgets = [];
-  final fireWidth = 10;
-  final fireHeight = 10;
+  final fireWidth = 100;
+  final fireHeight = 100;
   Table fireTabl;
   Timer _timer;
-  bool _debug = true;
+  bool _debug = false;
 
   @override
   void initState() {
     super.initState();
+
     _createFirestructure();
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer f) {
+
+    _timer = Timer.periodic(Duration(milliseconds: 100), (Timer f) {
       _calculateFirePropagation();
     });
   }
@@ -32,14 +34,13 @@ class _FloomFireState extends State<FloomFire> {
     int belowPixel = currentPixel + fireWidth;
     if (belowPixel < fireHeight * fireWidth) {
       Random r = Random();
-      int decay = 1; // r.nextInt(3).floor();
+      int decay = r.nextInt(3).floor();
       int belowPixelIntensity = fire[belowPixel];
       int newIntensityFire =
           belowPixelIntensity - decay > 0 ? belowPixelIntensity - decay : 0;
       int wind = currentPixel - decay >= 0 ? currentPixel - decay : 0;
       setState(() {
-        print('Setting ' + currentPixel.toString() + ' to ${newIntensityFire}');
-        fire[currentPixel] = newIntensityFire;
+        fire[wind] = newIntensityFire;
       });
     }
   }
@@ -73,16 +74,28 @@ class _FloomFireState extends State<FloomFire> {
   }
 
   Widget fireBlock(int index) {
+    // print(fire[index]);
+
     return Container(
       child: _debug
-          ? Text(
-              fire[index].toString(),
-              style: TextStyle(color: Colors.white),
+          ? Stack(
+              children: <Widget>[
+                Positioned(
+                  bottom: 1,
+                  child: Text(
+                    index.toString(),
+                    style: TextStyle(color: Colors.yellow),
+                  ),
+                )
+              ],
             )
           : Container(),
       width: MediaQuery.of(context).size.width / fireWidth,
       height: (MediaQuery.of(context).size.height / 2) / fireHeight - 1,
-      color: FIRE_COLORS[fire[index]],
+      // color: FIRE_COLORS[fire[8]],
+      decoration: BoxDecoration(
+          color: FIRE_COLORS[index],
+          border: Border.all(color: FIRE_COLORS[index])),
     );
   }
 
@@ -100,6 +113,7 @@ class _FloomFireState extends State<FloomFire> {
     _createFireSource();
     _calculateFirePropagation();
     _createFireWidgets();
+
     return GridView.count(
       crossAxisCount: fireWidth,
       // childAspectRatio: 1.0,
