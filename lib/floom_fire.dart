@@ -12,20 +12,18 @@ class FloomFire extends StatefulWidget {
 class _FloomFireState extends State<FloomFire> {
   List<int> fire = [];
   List<TableRow> tableRows = [];
-  List<List<Widget>> widgets = [];
-  final fireWidth = 5;
-  final fireHeight = 20;
+  List<Widget> widgets = [];
+  final fireWidth = 10;
+  final fireHeight = 10;
   Table fireTabl;
   Timer _timer;
-  bool _debug = false;
+  bool _debug = true;
 
   @override
   void initState() {
     super.initState();
     _createFirestructure();
-    _createFireSource();
-
-    _timer = Timer.periodic(Duration(milliseconds: 100), (Timer f) {
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer f) {
       _calculateFirePropagation();
     });
   }
@@ -34,24 +32,25 @@ class _FloomFireState extends State<FloomFire> {
     int belowPixel = currentPixel + fireWidth;
     if (belowPixel < fireHeight * fireWidth) {
       Random r = Random();
-      int decay = r.nextInt(3).floor();
+      int decay = 1; // r.nextInt(3).floor();
       int belowPixelIntensity = fire[belowPixel];
       int newIntensityFire =
           belowPixelIntensity - decay > 0 ? belowPixelIntensity - decay : 0;
       int wind = currentPixel - decay >= 0 ? currentPixel - decay : 0;
       setState(() {
-        fire[wind] = newIntensityFire;
+        print('Setting ' + currentPixel.toString() + ' to ${newIntensityFire}');
+        fire[currentPixel] = newIntensityFire;
       });
     }
   }
 
   void _createFireWidgets() {
     widgets = [];
+    int total = fireHeight * fireWidth;
     for (var row = 0; row < fireHeight; row++) {
-      widgets.add([]);
       for (var column = 0; column < fireWidth; column++) {
         int index = column + (fireWidth * row);
-        widgets[row].add(fireBlock(fire[index]));
+        widgets.add(fireBlock(fire[index]));
       }
     }
   }
@@ -75,12 +74,15 @@ class _FloomFireState extends State<FloomFire> {
 
   Widget fireBlock(int index) {
     return Container(
-      child: _debug ? Text(index.toString()) : Container(),
+      child: _debug
+          ? Text(
+              fire[index].toString(),
+              style: TextStyle(color: Colors.white),
+            )
+          : Container(),
       width: MediaQuery.of(context).size.width / fireWidth,
       height: (MediaQuery.of(context).size.height / 2) / fireHeight - 1,
-      decoration: BoxDecoration(
-        color: FIRE_COLORS[fire[index]],
-      ),
+      color: FIRE_COLORS[fire[index]],
     );
   }
 
@@ -96,10 +98,13 @@ class _FloomFireState extends State<FloomFire> {
   @override
   Widget build(BuildContext context) {
     _createFireSource();
+    _calculateFirePropagation();
     _createFireWidgets();
-    return Table(
+    return GridView.count(
+      crossAxisCount: fireWidth,
+      // childAspectRatio: 1.0,
       children: widgets.map((f) {
-        return TableRow(children: f);
+        return GridTile(child: f);
       }).toList(),
     );
   }

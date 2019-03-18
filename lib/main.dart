@@ -28,18 +28,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: <Widget>[
-          Padding(padding: EdgeInsets.only(top: 100), child: FloomFire()),
-          // Container(
-          //   width: 100,
-          //   height: 100,
-          //   color: FIRE_COLORS[35],
-          // )
-        ],
-      ),
-    );
+    return Scaffold(appBar: AppBar(), body: FloomFire());
   }
 }
