@@ -2,11 +2,11 @@
 
 Doom Fire implementation Using Flutter
 
-## Result Exemple Usign GridView Widget
+## Result Exemple with GridView Widget
 ![](exemple.gif)
 
 
-## Result Exemple Usign CustomPainter
+## Result Exemple with CustomPainter
 ![](test_painter.gif)
 
 
