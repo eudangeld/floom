@@ -1,14 +1,12 @@
 # floom
 
-A new Flutter project.
+Doom Fire implementation Using Flutter
 
-## Result Exemple
+## Result Exemple Usign GridView Widget
 ![](exemple.gif)
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+## Result Exemple Usign CustomPainter
+![](test_painter.gif)
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
 
